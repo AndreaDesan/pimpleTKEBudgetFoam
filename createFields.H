@@ -30,7 +30,7 @@ const dimensionedScalar tStart("tStart", runTime.startTime());
 const dimensionedScalar tSmall("tSmall", dimTime, small);
 
 //user must specify the time at which sampling started in the averagingPropertis dictionary
-IOdictionary transportProperties
+IOdictionary averagingProperties 
 (
     IOobject
     (
@@ -46,7 +46,7 @@ dimensionedScalar tStartAveraging
 (
     "tStartAveraging",
     dimTime,
-    transportProperties.lookup("tStartAveraging")
+    averagingProperties.lookup("tStartAveraging")
 );
 
 Info << "Started to collect statistics at t = " << tStartAveraging.value() << " s" << endl;
