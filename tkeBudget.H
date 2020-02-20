@@ -1,26 +1,37 @@
-dimensionedScalar currentTime("currentTime", dimTime, runTime.value());
-dimensionedScalar currentTimeStep("currentTimeStep", dimTime, runTime.deltaTValue());
+if (U.db().foundObject<volVectorField>("UMean"))
+{
 
-dimensionedScalar tAveraging("tAveraging", dimTime, currentTime.value()-tStartAveraging.value());
+    const objectRegistry& db = U.db();
 
-UAcc += U*currentTimeStep;
-pAcc += p*currentTimeStep;
+    volVectorField UPrime = (U - db.lookupObject<volVectorField>("UMean"));
 
-UTimeAveraged = UAcc/(max(tSmall,tAveraging));
-pTimeAveraged = pAcc/(max(tSmall,tAveraging));
+    volScalarField kSGS = turbulence->k(); //Instantaneous subgrid-scale tke
+	    
+    volScalarField kRes = 0.5*(UPrime & UPrime); //Instantaneous resolved tke
 
-UPrime=(U-UTimeAveraged); //instantaneous velocity fluctuations vector
-pPrime=(p-pTimeAveraged); //instantaneous pressure fluctuations
+    kTot = kRes + kSGS;
 
-RSGS = turbulence->R(); //Instantaneous subgrid-scale reynolds stress tensor
-kSGS = 0.5*tr(RSGS); //Instantaneous SGS turbulent kinetic energy
-	
-RRes = symm((UPrime*UPrime)); //Instantaneous resolved Reynolds stress tensor
-kRes = 0.5*tr(RRes); //Instantaneous resolved tke
+    volScalarField epsilonSGS = turbulence->epsilon();
 
-SRes = symm(fvc::grad(UPrime)); //Instantaneous resolved fluctuating rate of strain
-epsRes=-2*nuLam*(SRes && SRes); //Instantaneous resolved dissipation rate
+    volSymmTensorField SRes = symm(fvc::grad(UPrime)); //Instantaneous resolved fluctuating rate of strain
+    volScalarField epsilonRes=-2*nuLam*(SRes && SRes); //Instantaneous resolved dissipation rate
 
-LESResIndex = kRes/max(kSmall,(kRes+kSGS)); //Instantaneous ratio of resolved to total (Resolved + SGS) tke
+    epsilonTot = mag(epsilonRes + epsilonSGS);
 
-Info << "Statistics accumulated for " << tAveraging.value() << " s" << endl;
+    LESResIndex = kRes/max(kSmall,kTot); //Instantaneous ratio of resolved to total (Resolved + SGS) tke
+
+
+
+    Info << "ESTIMATED LESResIndex min, max, avg: " << min(LESResIndex).value()
+					    << ", " << max(LESResIndex).value()
+					    << ", " << LESResIndex.weightedAverage(mesh.V()).value()
+					    << endl;
+
+}
+
+else
+{
+     Warning << "Averaging of velocity U is not active in controlDict." << endl 
+             << "This is necessary to calculate resolved TKE and dissipation rate." << endl
+             << "Add field U to the fieldAverage utility iin controlDict." << endl;
+}

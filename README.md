@@ -1,5 +1,5 @@
 # pimpleTKEBudgetFoam
-Extension of the OpenFOAM's pimpleFoam solver to calculate the resolved Reynolds stress tensor, turbulent kinetic energy ![k](http://latex.codecogs.com/gif.latex?k) and turbulent dissipation rate ![$\varepsilon$](http://latex.codecogs.com/gif.latex?%24%5Cvarepsilon%24) at runtime during LES simulations. It can be easily extended to include all the terms of the turbulent kinetic energy budget.
+Extension of the OpenFOAM's pimpleFoam solver to calculate the total (SGS + resolved) turbulent kinetic energy ![k](http://latex.codecogs.com/gif.latex?k) and turbulent dissipation rate ![$\varepsilon$](http://latex.codecogs.com/gif.latex?%24%5Cvarepsilon%24) at runtime during LES simulations. It can be easily extended to include all the terms of the turbulent kinetic energy budget.
 
 In addition, the LES resolution index
 
@@ -7,7 +7,5 @@ In addition, the LES resolution index
 
 is also calculated at runtime.
 
-Please note that:
- - The time-averaging of the instantaneous velocity and pressure is hardcoded in the solver. The resulting time-averaged fields are UTimeAveraged and pTimeAveraged
- - The averaging of other desired quantities has to be set up via the fieldAverage utility
- - To allow for the averaging to span over different runs, the starting time of the averaging process has to be specified via the tStartAveraging entry in the averagingProperties dictionary (an example of the dictionary is included in the repository)
+Please note that the utlity assumes that the fieldAverage utility is used to calculate UMean. This is then used to calculate the fluctuating velocity vector UPrime within tkeBudget.H.
+If the time-averaging of U via fieldAverage is not set up in controlDict, the solver raises a warning and both kTot and epsilonTot will not be updated at runtime, keeping their initial value of zero (see the intialization in createFields.H) and the "if" statement in tkeBudget.H
