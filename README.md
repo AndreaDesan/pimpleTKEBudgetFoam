@@ -7,5 +7,6 @@ In addition, the LES resolution index
 
 is also calculated at runtime.
 
-Please note that the utlity assumes that the fieldAverage utility is used to calculate UMean. This is then used to calculate the fluctuating velocity vector UPrime within tkeBudget.H.
-If the time-averaging of U via fieldAverage is not set up in controlDict, the solver raises a warning and both kTot and epsilonTot will not be updated at runtime, keeping their initial value of zero (see the intialization in createFields.H) and the "if" statement in tkeBudget.H
+Please note that the utlity assumes that the fieldAverage utility is used to calculate UMean. This is then used to calculate the fluctuating velocity vector UPrime within tkeBudget.H as UPrime = U - UMean.
+
+If the time-averaging of U via fieldAverage is not set up in controlDict, the solver raises a warning and both kTot and epsilonTot will not be updated at runtime, keeping their initial value of zero (see the intialization in createFields.H and the "if" statement in tkeBudget.H).
