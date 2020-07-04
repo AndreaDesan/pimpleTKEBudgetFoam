@@ -1,5 +1,5 @@
 # pimpleTKEBudgetFoam
-Extension of the OpenFOAM's pimpleFoam solver to calculate the total (SGS + resolved) turbulent kinetic energy ![k](http://latex.codecogs.com/gif.latex?k) and turbulent dissipation rate ![$\varepsilon$](http://latex.codecogs.com/gif.latex?%24%5Cvarepsilon%24) at runtime during LES simulations. It can be easily extended to include all the terms of the turbulent kinetic energy budget.
+Extension of the OpenFOAM's pimpleFoam solver to calculate the total (SGS + resolved) turbulent kinetic energy ![k](http://latex.codecogs.com/gif.latex?k) and turbulent dissipation rate ![\varepsilon](https://latex.codecogs.com/gif.latex?\varepsilon) at runtime during LES simulations. It can be easily extended to include all the terms of the turbulent kinetic energy budget.
 
 In addition, the LES resolution index
 
